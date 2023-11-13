@@ -1,0 +1,212 @@
+\documentclass[10pt,letterpaper,unboxed,cm]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{varwidth, hyperref}
+\usepackage{varwidth, multicol}
+\usepackage{amsmath,amssymb}
+\usepackage{enumerate}
+\usepackage[table]{xcolor}
+
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\FR}{\mathcal{FR}}
+\newcommand{\st}{~\mid~}
+\newcommand{\blank}{\textvisiblespace}
+
+
+
+\begin{document}
+
+\hfill{CSE 105 Fall 2023}
+
+\hfill{Homework 5}
+
+\hfill{Due date: Wednesday, November 15 2023 at 11:59pm}
+
+\begin{center}
+\begin{minipage}[t]{5.7in}
+\rule{\linewidth}{2pt}
+{\sc Instructions}\newline
+{\bf One member} of the group should upload your group submission to Gradescope.
+During the submission process, they will be prompted to add the names of the rest
+of the group members.
+ All group members' names and PIDs
+should be on {\bf each} page of the submission.\\
+
+
+Your homework must be typed.  We recommend that you submit early drafts to Gradescope so that in 
+case of any technical difficulties, at least some of your work is present.  You may update
+your submission as many times as you'd like up to the deadline.\\
+
+
+Your assignments in this class will be evaluated not only on the correctness of your answers, but on your ability to present your ideas clearly and logically. You should always explain how you arrived at your conclusions, using mathematically sound reasoning. Whether you use formal proof techniques or write a more informal argument for why something is true, your answers should always be well-supported. Your goal should be to convince the reader that your results and methods are sound.\\
+
+
+
+{\sc Reading} Sipser Chapter 2.2,2.1,2.3
+\newline
+
+{\sc Key Concepts} 
+Turing Machines, configurations, Deciders, Recognizers, Enumerators
+\newline
+
+\rule{\linewidth}{2pt}
+\end{minipage} \hfill
+
+\end{center}
+
+\begin{enumerate}
+\item ({\bf 10 points})
+Consider the Turing Machine 
+$$(\{q_0,q_1,q_2,q_3,q_4,q_{acc},q_{rej}\},\{0,1\},\{0,1,a,b,\blank\},\delta,q_0,q_{acc},q_{rej})$$
+where $\delta$ is defined as:
+
+\begin{center}
+\begin{tabular}{l|l||||l|l||||l|l}
+$(q,s)$&$\delta((q,s))$&$(q,s)$&$\delta((q,s))$&$(q,s)$&$\delta((q,s))$\\
+\hline
+\hline
+$(q_0,0)$&$(q_1,a,R)$&$(q_2,0)$&$(q_2,0,L)$&\cellcolor{gray!25}$(q_4,0)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$\\
+\cellcolor{gray!25}$(q_0,1)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$&\cellcolor{gray!25}$(q_2,1)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$&\cellcolor{gray!25}$(q_4,1)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$\\
+\cellcolor{gray!25}$(q_0,a)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$&$(q_2,a)$&$(q_0,a,R)$&$(q_4,a)$&$(q_0,a,R)$\\
+$(q_0,b)$&$(q_3,b,R)$&$(q_2,b)$&$(q_2,b,L)$&$(q_4,b)$&$(q_4,0,L)$\\
+\cellcolor{gray!25}$(q_0,\blank)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$&\cellcolor{gray!25}$(q_2,\blank)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$&\cellcolor{gray!25}$(q_4,\blank)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$\\
+\hline
+$(q_1,0)$&$(q_1,0,R)$&\cellcolor{gray!25}$(q_3,0)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$&\\
+$(q_1,1)$&$(q_2,b,L)$&$(q_3,1)$&$(q_4,1,L)$&\\
+\cellcolor{gray!25}$(q_1,a)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$&\cellcolor{gray!25}$(q_3,a)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$&\\
+$(q_1,b)$&$(q_1,b,R)$&$(q_3,b)$&$(q_3,b,R)$&\\
+\cellcolor{gray!25}$(q_1,\blank)$&\cellcolor{gray!25}$(q_{rej},\blank,R)$&$(q_3,\blank)$&$(q_{acc},\blank,R)$&
+\end{tabular}
+\end{center}
+and
+$$\delta((q_{acc},s))=(q_{acc},\blank,L)~~~and~~~\delta((q_{rej},s))=(q_{rej},\blank,L)~~~~\text{for each } s\in \{0,1,a,b,\blank\}$$
+
+\begin{itemize}
+\item[a)]
+Draw the state diagram of this Turing machine. For clarity, in your diagram you may leave out all outgoing transitions from $q_{acc}$ and $q_{rej}$ and all incoming transitions to $q_{rej}$ (marked in gray).
+
+\item[b)]
+Trace through the first 10 configurations of the computation of this machine on input $001111$ by listing 
+each configuration of the tape.
+\item[c)]
+For each string, determine if it is accepted by this Turing machine or not: (no justification required.)
+\begin{itemize}
+\item
+$\varepsilon$
+\item
+$0111$
+\item
+$00111$
+\end{itemize}
+\item[e)]
+Describe the language that this machine recognizes in set builder notation.
+
+(no justification required.)
+[It shouldn't matter but this machine uses the convention of a regular turing machine where the tape has a first cell.]
+\end{itemize}
+
+
+\item (8 points)
+
+Recall the definition of an enumerator:
+
+\begin{quote}
+An enumerator is a deterministic Turing machine that does not have an accept state or a reject state. A subset of the states are \emph{print} states.
+Whenever a computation enters a print state, the enumerator ``prints" the string of all symbols on the current content of the tape from the beginning of the tape up to the first blank symbol. The only allowable input to the enumerator is the empty string (so the enumerator always starts with a tape of all blanks).
+\end{quote}
+
+\begin{enumerate}
+\item
+Design an enumerator that enumerates the language $L(01\cup 1^*)$. (include a drawing of your machine and a brief implementation level description.)
+
+\item
+Design an enumerator that enumerates the language $L(00(10)^*1)$. (include a drawing of your machine and a brief implementation level description.)
+
+\end{enumerate}
+
+\item
+({\bf 12 points})
+Suppose $M_1$ and $M_2$ are two Turing machines over the input alphabet $\{0,1\}$. Consider the Turing machine given by the following high-level description:
+
+\begin{quote}
+``$M =$ On input $w$,
+\begin{enumerate}
+\item
+Run $M_1$ on input $w$. If $M_1$ accepts $w$ then go to the next step. If $M_1$ rejects $w$ then go to the next step.
+\item
+Run $M_2$ on input $w$. If $M_2$ accepts $w$ then accept. If $M_2$ rejects $w$ then reject.
+\end{enumerate}
+\end{quote}
+
+For each of the following claims, answer {\bf Always True} if the statement is true for all possible machines $M_1$ and $M_2$, {\bf Always False} if the statement is false for all possible machines; and answer {\bf Neither} otherwise. Please give a short justification for your answer.
+
+\begin{enumerate}
+\item
+If $w\in L(M_1)$ and $w\in L(M_2)$ then $w\in L(M)$
+\item
+If $w\notin L(M_2)$ then $w \notin L(M)$
+\item
+If $w \in L(M_2)$ then $w \in L(M)$.
+\item
+If $L(M_1) = \emptyset$ then $L(M)=\emptyset$
+\item
+If $L(M_1) = \{0,1\}^*$ then $L(M)=L(M_2)$
+\item
+If $L(M_1) = \{0,1\}^*$ then $L(M_2) = \{0,1\}^*$
+\end{enumerate}
+
+\item
+Let $X$ be a language over the alphabet $\{a,b\}$. Recall the function $F$ from homework 3: 
+
+$$F(X) = \{x^n~|~x\in X, n\geq 0\}$$
+
+For example, if $X=\{ab,ba\}$ then $F(X) = \{\varepsilon, ab, ba, abab, baba, ababab, bababa,\dots\}$.
+
+(We showed that the set of regular languages is not closed under the operation $F$ and that the set of non-regular languages is also not closed under the operation $F$.)
+
+\begin{enumerate}
+
+\item
+We will show that the set of infinite languages recognized by enumerators is closed under the operation $F$.
+
+\begin{quote}
+Let $A$ be an infinite language recognizable by enumerators. Suppose that $E$ is an enumerator that recognizes $A$.
+
+Consider the enumerator $E'$ that I claim to enumerate $F(A)$:
+
+\begin{quote}
+$E' = $
+\begin{enumerate}[1.]
+\item
+For $i=1,2,3,\dots$ (repeat):
+\item
+~~~Run $E$ until it prints $i$ strings (recording those strings)
+\item
+~~~For each string $x$ in this collection of $i$ strings:
+\item
+~~~~~~print $\varepsilon, x, x^2,x^3,\dots x^i$
+\end{enumerate}
+\end{quote}
+\end{quote}
+
+Finish the proof by showing that $L(E') = F(A)$ (show $L(E')\subseteq F(A)$ and $F(A) \subseteq L(E')$.)
+
+\item
+Will this same construction work if we allow $A$ to be a finite language? why or why not?
+
+\item
+{\bf True} or {\bf False}:  this construction is sufficient evidence to prove that the class of infinite Turing-recognizable languages is closed under the operation $F()$.
+Briefly justify your answer.
+
+
+\item
+{\bf True} or {\bf False}:  this construction is sufficient evidence to prove that the class of infinite Turing-decidable languages is closed under the operation $F()$.
+Briefly justify your answer.
+
+
+\end{enumerate}
+
+
+\end{enumerate}
+
+\end{document}
